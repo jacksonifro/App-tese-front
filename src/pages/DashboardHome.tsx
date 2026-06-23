@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Typography, Grid, Card, CardContent, Button } from '@mui/material';
-import { Stethoscope, Activity, History, Users } from 'lucide-react';
+import { Activity, History, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export const DashboardHome: React.FC = () => {

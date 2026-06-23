@@ -97,7 +97,7 @@ export const PatientForm: React.FC = () => {
   const [cidades, setCidades] = useState<string[]>([]);
   const [loadingCidades, setLoadingCidades] = useState(false);
 
-  const { control, handleSubmit, reset, watch, setValue, trigger, formState: { errors } } = useRHForm<PatientFormData>({
+  const { control, handleSubmit, reset, watch, trigger, formState: { errors } } = useRHForm<PatientFormData>({
     resolver: zodResolver(patientSchema),
     defaultValues: {
       nome: '',
@@ -285,7 +285,7 @@ export const PatientForm: React.FC = () => {
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <Tabs 
             value={tabValue} 
-            onChange={(e, v) => setTabValue(v)} 
+            onChange={(_e, v) => setTabValue(v)} 
             variant="scrollable" 
             scrollButtons="auto"
             sx={{

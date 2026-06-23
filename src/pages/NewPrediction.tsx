@@ -4,7 +4,7 @@ import {
   Button, CircularProgress, Alert, Select, LinearProgress, Autocomplete
 } from '@mui/material';
 import type { SelectChangeEvent } from '@mui/material';
-import { YES_NO_OPTIONS, SUPORT_VEN_OPTIONS, SINTOMAS_LIST } from '../constants/options';
+import { YES_NO_OPTIONS, SUPORT_VEN_OPTIONS } from '../constants/options';
 import { predictionService } from '../services/prediction.service';
 import { patientService } from '../services/patient.service';
 import type { PredictionResponse, PacienteDTO, EpisodioDTO } from '../types/api';
@@ -82,7 +82,7 @@ export const NewPrediction: React.FC = () => {
     suporteVentilatorio: 'Não',
   });
 
-  const handleSearch = async (event: any, newValue: string, reason: string) => {
+  const handleSearch = async (_event: any, newValue: string, reason: string) => {
     if (reason === 'reset' || reason === 'selectOption') return;
     if (!newValue) {
       patientService.findAll(0, 50, '').then(data => setPatients(data.content)).catch(console.error);
@@ -160,7 +160,7 @@ export const NewPrediction: React.FC = () => {
                   getOptionLabel={(option) => `${option.nome} (CPF: ${option.cpf})`}
                   filterOptions={(x) => x}
                   onInputChange={handleSearch}
-                  onChange={(event, newValue) => setSelectedPatient(newValue)}
+                  onChange={(_event, newValue) => setSelectedPatient(newValue)}
                   loading={searchLoading}
                   renderInput={(params) => (
                     <TextField {...params} label="Buscar por Nome ou CPF" variant="outlined" fullWidth />
