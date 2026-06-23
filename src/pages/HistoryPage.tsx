@@ -33,13 +33,13 @@ export const HistoryPage: React.FC = () => {
       field: 'dataHora', 
       headerName: 'Data/Hora', 
       width: 160,
-      valueFormatter: (params: any) => params?.value ? new Date(params.value).toLocaleString('pt-BR') : ''
+      valueFormatter: (value: any) => value ? new Date(value).toLocaleString('pt-BR') : ''
     },
     { 
       field: 'pacienteNome', 
       headerName: 'Paciente', 
       flex: 1,
-      valueGetter: (params: any) => params.row?.atendimento?.paciente?.nome || 'Desconhecido'
+      valueGetter: (_value: any, row: any) => row?.atendimento?.paciente?.nome || 'Desconhecido'
     },
     { 
       field: 'resultado', 
@@ -47,8 +47,8 @@ export const HistoryPage: React.FC = () => {
       width: 120,
       renderCell: (params) => (
         <Chip 
-          label={params.value} 
-          color={params.value === 'Obito' ? 'error' : 'success'} 
+          label={params.row?.resultado || ''} 
+          color={params.row?.resultado === 'Obito' ? 'error' : 'success'} 
           size="small" 
           sx={{ fontWeight: 'bold' }}
         />

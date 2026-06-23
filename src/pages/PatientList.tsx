@@ -60,7 +60,7 @@ export const PatientList: React.FC = () => {
       field: 'dataNascimento', 
       headerName: 'Data Nasc.', 
       width: 120,
-      valueFormatter: (params: any) => params?.value ? new Date(params.value).toLocaleDateString('pt-BR') : ''
+      valueFormatter: (value: any) => value ? new Date(value).toLocaleDateString('pt-BR') : ''
     },
     { field: 'sexo', headerName: 'Sexo', width: 120 },
     {
