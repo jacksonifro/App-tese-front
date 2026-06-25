@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Button, TextField, Paper, IconButton, Tooltip } from '@mui/material';
+import { Box, Typography, Button, TextField, Paper, IconButton, Tooltip, Chip } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import type { GridColDef, GridPaginationModel } from '@mui/x-data-grid';
 import { useNavigate } from 'react-router-dom';
 import { patientService } from '../services/patient.service';
+import { getPatientType } from '../utils/patientUtils';
 import type { PacienteDTO } from '../types/api';
 import { Plus, Search, Pencil, Trash2 } from 'lucide-react';
 
@@ -63,6 +64,21 @@ export const PatientList: React.FC = () => {
       valueFormatter: (params: any) => params?.value ? new Date(params.value).toLocaleDateString('pt-BR') : ''
     },
     { field: 'sexo', headerName: 'Sexo', width: 120 },
+    { 
+      field: 'tipo', 
+      headerName: 'Tipo', 
+      width: 150,
+      renderCell: (params: any) => {
+        const type = getPatientType(params.row);
+        let color = 'default';
+        if (type === 'Gestante') color = 'secondary';
+        else if (type === 'Puérpera') color = 'error';
+        else if (type.startsWith('Criança')) color = 'info';
+        else color = 'primary';
+        
+        return <Chip label={type} color={color as any} size="small" variant="outlined" />;
+      }
+    },
     {
       field: 'actions',
       headerName: 'Ações',

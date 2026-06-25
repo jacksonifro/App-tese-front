@@ -8,6 +8,7 @@ import { YES_NO_OPTIONS, SUPORT_VEN_OPTIONS } from '../constants/options';
 import { predictionService } from '../services/prediction.service';
 import { patientService } from '../services/patient.service';
 import type { PredictionResponse, PacienteDTO, EpisodioDTO } from '../types/api';
+import { getPatientType, calculateAge } from '../utils/patientUtils';
 import { Dashboard } from '../components/Dashboard';
 
 const CustomSelect = ({ label, name, value, onChange, options, placeholder, required = true, disabled = false }: any) => (
@@ -171,8 +172,11 @@ export const NewPrediction: React.FC = () => {
                   <Box sx={{ mt: 3, p: 2, backgroundColor: '#F8FAFC', borderRadius: 2 }}>
                     <Typography variant="subtitle2" color="text.secondary">Dados Cadastrais (Read-only)</Typography>
                     <Typography variant="body1"><strong>Nome:</strong> {selectedPatient.nome}</Typography>
-                    <Typography variant="body1"><strong>Idade Mapeada:</strong> {new Date(selectedPatient.dataNascimento).toLocaleDateString()}</Typography>
+                    <Typography variant="body1"><strong>Idade Mapeada:</strong> {calculateAge(selectedPatient.dataNascimento)} anos ({new Date(selectedPatient.dataNascimento).toLocaleDateString()})</Typography>
                     <Typography variant="body1"><strong>Sexo:</strong> {selectedPatient.sexo}</Typography>
+                    <Typography variant="body1">
+                      <strong>Tipo de Paciente (Modelo Preditivo):</strong> <span style={{ color: '#0F52BA', fontWeight: 600 }}>{getPatientType(selectedPatient)}</span>
+                    </Typography>
                   </Box>
                 )}
               </CardContent>
