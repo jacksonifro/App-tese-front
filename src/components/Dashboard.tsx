@@ -65,48 +65,44 @@ export const Dashboard: React.FC<DashboardProps> = ({ response }) => {
         </Grid>
 
         {/* Explicação IA */}
-        {response.llmAnalysis && (
-          <Grid item xs={12}>
-            <Card sx={{ backgroundColor: '#F0F9FF', borderColor: '#B9E6FE' }}>
-              <CardContent>
-                <Typography variant="h6" sx={{ mb: 2, color: '#026AA2', display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <ActivitySquare size={20} /> Análise da Inteligência Artificial (Gemini)
-                </Typography>
-                <Box sx={{ color: '#0B5351', '& p': { m: 0, mb: 1 } }}>
-                  {(response.llmAnalysis.includes('Erro') || response.llmAnalysis.includes('429') || response.llmAnalysis.includes('Indisponivel')) ? (
-                    <Typography sx={{ fontStyle: 'italic', color: '#026AA2' }}>
-                      Modelo Gemini temporariamente indisponível (falha de comunicação ou cota excedida).
-                    </Typography>
-                  ) : (
-                    <ReactMarkdown>{response.llmAnalysis}</ReactMarkdown>
-                  )}
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
-        )}
+        <Grid item xs={12}>
+          <Card sx={{ backgroundColor: '#F0F9FF', borderColor: '#B9E6FE' }}>
+            <CardContent>
+              <Typography variant="h6" sx={{ mb: 2, color: '#026AA2', display: 'flex', alignItems: 'center', gap: 1 }}>
+                <ActivitySquare size={20} /> Análise da Inteligência Artificial (Gemini)
+              </Typography>
+              <Box sx={{ color: '#0B5351', '& p': { m: 0, mb: 1 } }}>
+                {(!response.llmAnalysis || response.llmAnalysis.includes('Erro') || response.llmAnalysis.includes('429') || response.llmAnalysis.includes('Indisponivel')) ? (
+                  <Typography sx={{ fontStyle: 'italic', color: '#026AA2' }}>
+                    Modelo Gemini temporariamente indisponível (falha de comunicação ou cota excedida).
+                  </Typography>
+                ) : (
+                  <ReactMarkdown>{response.llmAnalysis}</ReactMarkdown>
+                )}
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
 
         {/* Explicação IA Groq */}
-        {response.groqAnalysis && (
-          <Grid item xs={12}>
-            <Card sx={{ backgroundColor: '#FDF4FF', borderColor: '#FBCFE8' }}>
-              <CardContent>
-                <Typography variant="h6" sx={{ mb: 2, color: '#9D174D', display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <ActivitySquare size={20} /> Análise da Inteligência Artificial (Groq / Llama-3)
-                </Typography>
-                <Box sx={{ color: '#831843', '& p': { m: 0, mb: 1 } }}>
-                  {(response.groqAnalysis.includes('Erro') || response.groqAnalysis.includes('429') || response.groqAnalysis.includes('Indisponivel')) ? (
-                    <Typography sx={{ fontStyle: 'italic', color: '#9D174D' }}>
-                      Modelo Groq temporariamente indisponível.
-                    </Typography>
-                  ) : (
-                    <ReactMarkdown>{response.groqAnalysis}</ReactMarkdown>
-                  )}
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
-        )}
+        <Grid item xs={12}>
+          <Card sx={{ backgroundColor: '#FDF4FF', borderColor: '#FBCFE8' }}>
+            <CardContent>
+              <Typography variant="h6" sx={{ mb: 2, color: '#9D174D', display: 'flex', alignItems: 'center', gap: 1 }}>
+                <ActivitySquare size={20} /> Análise da Inteligência Artificial (Groq / Llama-3)
+              </Typography>
+              <Box sx={{ color: '#831843', '& p': { m: 0, mb: 1 } }}>
+                {(!response.groqAnalysis || response.groqAnalysis.includes('Erro') || response.groqAnalysis.includes('429') || response.groqAnalysis.includes('Indisponivel')) ? (
+                  <Typography sx={{ fontStyle: 'italic', color: '#9D174D' }}>
+                    Modelo Groq temporariamente indisponível.
+                  </Typography>
+                ) : (
+                  <ReactMarkdown>{response.groqAnalysis}</ReactMarkdown>
+                )}
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
 
         {/* Consenso dos Modelos Individuais */}
         <Grid item xs={12}>
