@@ -78,6 +78,7 @@ export interface PredictionResponse {
   svm: ModelPredictionResult;
   gradientBoosting: ModelPredictionResult;
   llmAnalysis: string;
+  groqAnalysis: string;
   verdictBoard: VerdictBoard;
   processingTimeMs: number;
 }
