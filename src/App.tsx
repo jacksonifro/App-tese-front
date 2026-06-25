@@ -7,6 +7,7 @@ import { PatientList } from './pages/PatientList';
 import { PatientForm } from './pages/PatientForm';
 import { NewPrediction } from './pages/NewPrediction';
 import { DashboardHome } from './pages/DashboardHome';
+import { AboutModels } from './pages/AboutModels';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
             <Route path="pacientes/:id" element={<PatientForm />} />
             <Route path="predicao/nova" element={<NewPrediction />} />
             <Route path="history" element={<HistoryPage />} />
+            <Route path="sobre-modelos" element={<AboutModels />} />
           </Route>
         </Routes>
       </BrowserRouter>

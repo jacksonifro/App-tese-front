@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography, AppBar, Toolbar, CssBaseline } from '@mui/material';
-import { Activity, History, Stethoscope } from 'lucide-react';
+import { Activity, History, Stethoscope, BookOpen } from 'lucide-react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 
 const drawerWidth = 260;
@@ -14,6 +14,7 @@ export const MainLayout: React.FC = () => {
     { text: 'Pacientes', icon: <Stethoscope size={22} />, path: '/pacientes' },
     { text: 'Nova Predição', icon: <Activity size={22} />, path: '/predicao/nova' },
     { text: 'Histórico', icon: <History size={22} />, path: '/history' },
+    { text: 'Sobre os Modelos', icon: <BookOpen size={22} />, path: '/sobre-modelos' },
   ];
 
   return (
