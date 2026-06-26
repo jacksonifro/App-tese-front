@@ -6,11 +6,18 @@ import { useNavigate } from 'react-router-dom';
 import { patientService } from '../services/patient.service';
 import { getPatientType } from '../utils/patientUtils';
 import type { PacienteDTO } from '../types/api';
-import { Plus, Search, Pencil, Trash2 } from 'lucide-react';
+import { Plus, Search, Pencil, Trash2, LineChart as LineChartIcon } from 'lucide-react';
+
+import { PatientEvolutionModal } from '../components/PatientEvolutionModal';
+import { predictionService } from '../services/prediction.service';
+
+interface PacienteDTOWithCount extends PacienteDTO {
+  qtdPredicoes?: number;
+}
 
 export const PatientList: React.FC = () => {
   const navigate = useNavigate();
-  const [patients, setPatients] = useState<PacienteDTO[]>([]);
+  const [patients, setPatients] = useState<PacienteDTOWithCount[]>([]);
   const [totalRows, setTotalRows] = useState(0);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState('');
@@ -20,11 +27,29 @@ export const PatientList: React.FC = () => {
     pageSize: 10,
   });
 
+  const [evolutionModalOpen, setEvolutionModalOpen] = useState(false);
+  const [selectedPatientId, setSelectedPatientId] = useState<number | null>(null);
+
+  const handleOpenEvolution = (id: number) => {
+    setSelectedPatientId(id);
+    setEvolutionModalOpen(true);
+  };
+
   const fetchPatients = async () => {
     setLoading(true);
     try {
       const data = await patientService.findAll(paginationModel.page, paginationModel.pageSize, search);
-      setPatients(data.content);
+      
+      const contentWithCounts = await Promise.all(data.content.map(async (p: PacienteDTO) => {
+         try {
+           const history = await predictionService.getHistoryByPatient(p.id!);
+           return { ...p, qtdPredicoes: history.length };
+         } catch {
+           return { ...p, qtdPredicoes: 0 };
+         }
+      }));
+      
+      setPatients(contentWithCounts);
       setTotalRows(data.totalElements);
     } catch (error) {
       console.error('Error fetching patients:', error);
@@ -79,6 +104,16 @@ export const PatientList: React.FC = () => {
         return <Chip label={type} color={color as any} size="small" variant="outlined" />;
       }
     },
+    { 
+      field: 'qtdPredicoes', 
+      headerName: 'Nº Predições', 
+      width: 120,
+      renderCell: (params: any) => (
+        <Typography variant="body2" sx={{ fontWeight: 600 }}>
+          {params.value || 0}
+        </Typography>
+      )
+    },
     {
       field: 'actions',
       headerName: 'Ações',
@@ -86,6 +121,16 @@ export const PatientList: React.FC = () => {
       sortable: false,
       renderCell: (params) => (
         <Box sx={{ display: 'flex', gap: 1 }}>
+          <Tooltip title="Evolução">
+            <IconButton 
+              size="small" 
+              color="info"
+              onClick={() => handleOpenEvolution(params.row.id)}
+              disabled={!params.row.qtdPredicoes}
+            >
+              <LineChartIcon size={18} />
+            </IconButton>
+          </Tooltip>
           <Tooltip title="Editar">
             <IconButton 
               size="small" 
@@ -154,6 +199,12 @@ export const PatientList: React.FC = () => {
           }}
         />
       </Paper>
+      
+      <PatientEvolutionModal 
+        open={evolutionModalOpen}
+        onClose={() => setEvolutionModalOpen(false)}
+        patientId={selectedPatientId}
+      />
     </Box>
   );
 };
