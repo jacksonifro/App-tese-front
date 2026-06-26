@@ -71,6 +71,11 @@ export interface VerdictBoard {
   finalVerdict: string;
 }
 
+export interface FeatureWeight {
+  feature: string;
+  impact: string;
+}
+
 export interface PredictionResponse {
   randomForest: ModelPredictionResult;
   knn: ModelPredictionResult;
@@ -80,6 +85,7 @@ export interface PredictionResponse {
   llmAnalysis: string;
   groqAnalysis: string;
   verdictBoard: VerdictBoard;
+  topFeatures?: FeatureWeight[];
   processingTimeMs: number;
 }
 
@@ -147,6 +153,7 @@ export interface PacienteDTO {
   estadoCivil?: string;
   escolaridade?: string;
   profissao?: string;
+  qtdPredicoes?: number;
   endereco?: EnderecoDTO;
   contato?: ContatoDTO;
   vacinacao?: VacinacaoDTO;

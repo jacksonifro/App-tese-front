@@ -9,11 +9,9 @@ import type { PacienteDTO } from '../types/api';
 import { Plus, Search, Pencil, Trash2, LineChart as LineChartIcon } from 'lucide-react';
 
 import { PatientEvolutionModal } from '../components/PatientEvolutionModal';
-import { predictionService } from '../services/prediction.service';
 
-interface PacienteDTOWithCount extends PacienteDTO {
-  qtdPredicoes?: number;
-}
+// qtdPredicoes is now included directly in PacienteDTO from backend
+interface PacienteDTOWithCount extends PacienteDTO {}
 
 export const PatientList: React.FC = () => {
   const navigate = useNavigate();
@@ -40,16 +38,7 @@ export const PatientList: React.FC = () => {
     try {
       const data = await patientService.findAll(paginationModel.page, paginationModel.pageSize, search);
       
-      const contentWithCounts = await Promise.all(data.content.map(async (p: PacienteDTO) => {
-         try {
-           const history = await predictionService.getHistoryByPatient(p.id!);
-           return { ...p, qtdPredicoes: history.length };
-         } catch {
-           return { ...p, qtdPredicoes: 0 };
-         }
-      }));
-      
-      setPatients(contentWithCounts);
+      setPatients(data.content);
       setTotalRows(data.totalElements);
     } catch (error) {
       console.error('Error fetching patients:', error);

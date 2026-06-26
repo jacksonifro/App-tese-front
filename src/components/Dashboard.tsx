@@ -120,6 +120,52 @@ export const Dashboard: React.FC<DashboardProps> = ({ response }) => {
           </Card>
         </Grid>
 
+        {/* Fatores Determinantes (Explainable AI) */}
+        {response.topFeatures && response.topFeatures.length > 0 && (
+          <Grid item xs={12}>
+            <Card sx={{ backgroundColor: '#FFFDF0', borderColor: '#FEF0C7' }}>
+              <CardContent>
+                <Typography variant="h6" sx={{ mb: 2, color: '#B54708', display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Brain size={20} /> Fatores Determinantes na Predição (Explainable AI)
+                </Typography>
+                <Typography variant="body2" sx={{ mb: 2, color: '#B54708' }}>
+                  Principais variáveis clínicas que influenciaram a decisão do modelo (extraído via análise conjunta dos sistemas de IA).
+                </Typography>
+                
+                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                  {response.topFeatures.map((feat, idx) => {
+                    const impactLower = feat.impact?.toLowerCase() || '';
+                    let bgColor = '#FEF0C7';
+                    let color = '#B54708';
+                    
+                    if (impactLower.includes('crítico') || impactLower.includes('critico') || impactLower.includes('alto')) {
+                      bgColor = '#FEE4E2';
+                      color = '#D92D20';
+                    } else if (impactLower.includes('baixo')) {
+                      bgColor = '#D1FADF';
+                      color = '#039855';
+                    }
+
+                    return (
+                      <Chip
+                        key={idx}
+                        label={`${feat.feature}: Impacto ${feat.impact}`}
+                        sx={{
+                          backgroundColor: bgColor,
+                          color: color,
+                          fontWeight: 600,
+                          fontSize: '0.85rem',
+                          p: 1
+                        }}
+                      />
+                    );
+                  })}
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+        )}
+
         {/* Explicação IA */}
         <Grid item xs={12}>
           <Card sx={{ backgroundColor: '#F0F9FF', borderColor: '#B9E6FE' }}>

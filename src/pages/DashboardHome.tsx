@@ -2,9 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Box, Typography, Grid, Card, CardContent, Button, CircularProgress } from '@mui/material';
 import { Activity, History, Users, AlertTriangle, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { patientService } from '../services/patient.service';
-import { predictionService } from '../services/prediction.service';
-import { getPatientType } from '../utils/patientUtils';
+import { dashboardService } from '../services/dashboard.service';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   PieChart, Pie, Cell, AreaChart, Area
@@ -28,77 +26,18 @@ export const DashboardHome: React.FC = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [patientsRes, historyRes] = await Promise.all([
-           patientService.findAll(0, 1000),
-           predictionService.getAllHistory()
-        ]);
-        
-        const patients = patientsRes.content || [];
-        const totalPatients = patientsRes.totalElements || 0;
-        const totalPredictions = historyRes.length;
-        
-        const criticalCount = historyRes.filter(h => h.resultado === 'ÓBITO' || h.resultado === 'OBITO').length;
-        
-        let sumAge = 0;
-        let validAges = 0;
-        const typesCount: Record<string, number> = {};
-        
-        patients.forEach(p => {
-          if (p.dataNascimento) {
-            const age = new Date().getFullYear() - new Date(p.dataNascimento).getFullYear();
-            sumAge += age;
-            validAges++;
-          }
-          const type = getPatientType(p);
-          typesCount[type] = (typesCount[type] || 0) + 1;
-        });
-        
-        const avgAge = validAges > 0 ? Math.round(sumAge / validAges) : 0;
+        const statsData = await dashboardService.getStats();
         
         setStats({
-          totalPatients,
-          totalPredictions,
-          criticalPatients: criticalCount,
-          averageAge: avgAge
+          totalPatients: statsData.totalPatients,
+          totalPredictions: statsData.totalPredictions,
+          criticalPatients: statsData.criticalPatients,
+          averageAge: statsData.averageAge
         });
 
-        // Gráfico Vereditos (Pie Chart)
-        let cura = 0; let obito = 0;
-        historyRes.forEach(h => {
-          if (h.resultado === 'ÓBITO' || h.resultado === 'OBITO') obito++;
-          else cura++;
-        });
-        setVerdictData([
-          { name: 'Cura', value: cura, color: '#12B76A' },
-          { name: 'Óbito', value: obito, color: '#D92D20' }
-        ]);
-
-        // Gráfico Tipos de Paciente (Bar Chart)
-        const pTypeData = Object.entries(typesCount).map(([name, count]) => {
-          let shortName = name.split(' ')[0]; // Simplificar nomes grandes
-          if (name === 'Adulto / Idoso') shortName = 'Adulto/Idoso';
-          return {
-            name: shortName,
-            quantidade: count
-          };
-        }).sort((a, b) => b.quantidade - a.quantidade);
-        setPatientTypeData(pTypeData);
-
-        // Gráfico Linha do Tempo (Area Chart)
-        const timelineObj: Record<string, number> = {};
-        historyRes.forEach(h => {
-          const date = new Date(h.dataHora);
-          const key = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}`;
-          timelineObj[key] = (timelineObj[key] || 0) + 1;
-        });
-        
-        const sortedDates = Object.keys(timelineObj).sort((a,b) => {
-           const [d1, m1] = a.split('/');
-           const [d2, m2] = b.split('/');
-           return (parseInt(m1)*100 + parseInt(d1)) - (parseInt(m2)*100 + parseInt(d2));
-        });
-
-        setTimelineData(sortedDates.map(d => ({ name: d, Predições: timelineObj[d] })));
+        setVerdictData(statsData.verdictData);
+        setPatientTypeData(statsData.patientTypeData.map(d => ({ name: d.name, quantidade: d.value })));
+        setTimelineData(statsData.timelineData);
 
       } catch (err) {
          console.error('Error loading dashboard data', err);

@@ -75,3 +75,9 @@ O roteamento é configurado no arquivo `App.tsx` utilizando `BrowserRouter` e `R
 1. **Estado Simples vs Global:** A aplicação aparenta utilizar estado local do React para gerenciar formulários (via React Hook Form) e `localStorage` (via `historyStore.ts`) para persistência de dados leves. Não há bibliotecas pesadas de gerenciamento de estado global.
 2. **Design System:** O uso forte do Material UI sugere que os componentes seguem as diretrizes do Material Design, mas adaptados através do arquivo de tema (`theme.ts`).
 3. **Padrão de Formulários:** O uso conjunto do Zod com React Hook Form garante que a validação dos dados (como CPF, datas e campos obrigatórios) ocorra de forma performática e strongly-typed antes da submissão à API.
+
+## 7. Atualizações Recentes (26/06)
+
+- **Dashboard:** Implementação de um novo dashboard com melhorias visuais e inclusão de um gráfico de evolução.
+- **Formulário de Pacientes:** Adicionado o campo "tipo de paciente" (criança, gestante, puérpera) para categorização específica na predição.
+

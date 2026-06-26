@@ -33,7 +33,7 @@ export const MainLayout: React.FC = () => {
         <Toolbar>
           <Box sx={{ display: 'flex', alignItems: 'center', width: '100%', justifyContent: 'space-between' }}>
             <Typography variant="h6" noWrap component="div" sx={{ fontWeight: 600 }}>
-              Sistema Inteligente de Predição de Desfecho Clínico
+              Sistema Inteligente de Predição de Desfecho Clínico <span style={{ fontWeight: 600, color: '#0F52BA' }}>Saúde Predict</span>
             </Typography>
           </Box>
         </Toolbar>
@@ -55,13 +55,13 @@ export const MainLayout: React.FC = () => {
       >
         <Box sx={{ p: 3, display: 'flex', alignItems: 'center', gap: 2 }}>
           <Box sx={{ backgroundColor: 'white', color: '#0F52BA', p: 1, borderRadius: 2 }}>
-             <Stethoscope size={28} />
+            <Stethoscope size={28} />
           </Box>
           <Typography variant="h6" sx={{ fontWeight: 700, lineHeight: 1.2 }}>
-            Saúde<br/>Predict
+            Saúde<br />Predict
           </Typography>
         </Box>
-        
+
         <List sx={{ px: 2 }}>
           {menuItems.map((item) => {
             const isSelected = location.pathname === item.path;
@@ -80,8 +80,8 @@ export const MainLayout: React.FC = () => {
                   <ListItemIcon sx={{ color: '#FFFFFF', minWidth: 40 }}>
                     {item.icon}
                   </ListItemIcon>
-                  <ListItemText 
-                    primary={item.text} 
+                  <ListItemText
+                    primary={item.text}
                     primaryTypographyProps={{ fontWeight: isSelected ? 600 : 400 }}
                   />
                 </ListItemButton>
