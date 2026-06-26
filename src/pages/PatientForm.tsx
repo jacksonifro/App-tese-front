@@ -97,7 +97,7 @@ export const PatientForm: React.FC = () => {
   const [cidades, setCidades] = useState<string[]>([]);
   const [loadingCidades, setLoadingCidades] = useState(false);
 
-  const { control, handleSubmit, reset, watch, trigger, formState: { errors } } = useRHForm<PatientFormData>({
+  const { control, handleSubmit, reset, watch, trigger, setValue, formState: { errors } } = useRHForm<PatientFormData>({
     resolver: zodResolver(patientSchema),
     defaultValues: {
       nome: '',
@@ -121,6 +121,23 @@ export const PatientForm: React.FC = () => {
 
   const ufSelecionada = watch('endereco.uf');
   const dataNascimentoSelecionada = watch('dataNascimento');
+  const fatorRiscoSelecionado = watch('comorbidade.fatorRisco');
+  const vacinaCovidSelecionada = watch('vacinacao.vacinaCovid');
+
+  useEffect(() => {
+    if (fatorRiscoSelecionado === 'Não') {
+      const comorbKeys = ['diabetes', 'cardiopatia', 'asma', 'renal', 'hepatica', 'pneumopatia', 'hematologica', 'neurologica', 'imunodepressao', 'sindromeDown', 'obesidade'];
+      comorbKeys.forEach(k => setValue(`comorbidade.${k}` as any, 'Não'));
+    }
+  }, [fatorRiscoSelecionado, setValue]);
+
+  useEffect(() => {
+    if (vacinaCovidSelecionada === 'Não') {
+      setValue('vacinacao.primeiraDose', 'Não');
+      setValue('vacinacao.segundaDose', 'Não');
+      setValue('vacinacao.terceiraDose', 'Não');
+    }
+  }, [vacinaCovidSelecionada, setValue]);
 
   const idadeCalculada = React.useMemo(() => {
     if (!dataNascimentoSelecionada) return '';
@@ -308,8 +325,6 @@ export const PatientForm: React.FC = () => {
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 e.preventDefault();
-                if (tabValue < 4) handleNext();
-                else handleSubmit(onSubmit, onError)();
               }
             }}
           >
@@ -480,77 +495,77 @@ export const PatientForm: React.FC = () => {
                 </Grid>
                 <Grid item xs={12} sm={4} md={3}>
                   <Controller name="comorbidade.diabetes" control={control} render={({ field }) => (
-                    <TextField {...field} select label="Diabetes *" fullWidth>
+                    <TextField {...field} select label="Diabetes *" fullWidth disabled={fatorRiscoSelecionado === 'Não'}>
                       {YES_NO_OPTIONS.map(opt => <MenuItem key={opt} value={opt}>{opt}</MenuItem>)}
                     </TextField>
                   )} />
                 </Grid>
                 <Grid item xs={12} sm={4} md={3}>
                   <Controller name="comorbidade.cardiopatia" control={control} render={({ field }) => (
-                    <TextField {...field} select label="Cardiopatia *" fullWidth>
+                    <TextField {...field} select label="Cardiopatia *" fullWidth disabled={fatorRiscoSelecionado === 'Não'}>
                       {YES_NO_OPTIONS.map(opt => <MenuItem key={opt} value={opt}>{opt}</MenuItem>)}
                     </TextField>
                   )} />
                 </Grid>
                 <Grid item xs={12} sm={4} md={3}>
                   <Controller name="comorbidade.asma" control={control} render={({ field }) => (
-                    <TextField {...field} select label="Asma *" fullWidth>
+                    <TextField {...field} select label="Asma *" fullWidth disabled={fatorRiscoSelecionado === 'Não'}>
                       {YES_NO_OPTIONS.map(opt => <MenuItem key={opt} value={opt}>{opt}</MenuItem>)}
                     </TextField>
                   )} />
                 </Grid>
                 <Grid item xs={12} sm={4} md={3}>
                   <Controller name="comorbidade.renal" control={control} render={({ field }) => (
-                    <TextField {...field} select label="Doença Renal *" fullWidth>
+                    <TextField {...field} select label="Doença Renal *" fullWidth disabled={fatorRiscoSelecionado === 'Não'}>
                       {YES_NO_OPTIONS.map(opt => <MenuItem key={opt} value={opt}>{opt}</MenuItem>)}
                     </TextField>
                   )} />
                 </Grid>
                 <Grid item xs={12} sm={4} md={3}>
                   <Controller name="comorbidade.hepatica" control={control} render={({ field }) => (
-                    <TextField {...field} select label="Doença Hepática *" fullWidth>
+                    <TextField {...field} select label="Doença Hepática *" fullWidth disabled={fatorRiscoSelecionado === 'Não'}>
                       {YES_NO_OPTIONS.map(opt => <MenuItem key={opt} value={opt}>{opt}</MenuItem>)}
                     </TextField>
                   )} />
                 </Grid>
                 <Grid item xs={12} sm={4} md={3}>
                   <Controller name="comorbidade.pneumopatia" control={control} render={({ field }) => (
-                    <TextField {...field} select label="Pneumopatia *" fullWidth>
+                    <TextField {...field} select label="Pneumopatia *" fullWidth disabled={fatorRiscoSelecionado === 'Não'}>
                       {YES_NO_OPTIONS.map(opt => <MenuItem key={opt} value={opt}>{opt}</MenuItem>)}
                     </TextField>
                   )} />
                 </Grid>
                 <Grid item xs={12} sm={4} md={3}>
                   <Controller name="comorbidade.hematologica" control={control} render={({ field }) => (
-                    <TextField {...field} select label="D. Hematológica *" fullWidth>
+                    <TextField {...field} select label="D. Hematológica *" fullWidth disabled={fatorRiscoSelecionado === 'Não'}>
                       {YES_NO_OPTIONS.map(opt => <MenuItem key={opt} value={opt}>{opt}</MenuItem>)}
                     </TextField>
                   )} />
                 </Grid>
                 <Grid item xs={12} sm={4} md={3}>
                   <Controller name="comorbidade.neurologica" control={control} render={({ field }) => (
-                    <TextField {...field} select label="D. Neurológica *" fullWidth>
+                    <TextField {...field} select label="D. Neurológica *" fullWidth disabled={fatorRiscoSelecionado === 'Não'}>
                       {YES_NO_OPTIONS.map(opt => <MenuItem key={opt} value={opt}>{opt}</MenuItem>)}
                     </TextField>
                   )} />
                 </Grid>
                 <Grid item xs={12} sm={4} md={3}>
                   <Controller name="comorbidade.imunodepressao" control={control} render={({ field }) => (
-                    <TextField {...field} select label="Imunodepressão *" fullWidth>
+                    <TextField {...field} select label="Imunodepressão *" fullWidth disabled={fatorRiscoSelecionado === 'Não'}>
                       {YES_NO_OPTIONS.map(opt => <MenuItem key={opt} value={opt}>{opt}</MenuItem>)}
                     </TextField>
                   )} />
                 </Grid>
                 <Grid item xs={12} sm={4} md={3}>
                   <Controller name="comorbidade.sindromeDown" control={control} render={({ field }) => (
-                    <TextField {...field} select label="Síndrome de Down *" fullWidth>
+                    <TextField {...field} select label="Síndrome de Down *" fullWidth disabled={fatorRiscoSelecionado === 'Não'}>
                       {YES_NO_OPTIONS.map(opt => <MenuItem key={opt} value={opt}>{opt}</MenuItem>)}
                     </TextField>
                   )} />
                 </Grid>
                 <Grid item xs={12} sm={4} md={3}>
                   <Controller name="comorbidade.obesidade" control={control} render={({ field }) => (
-                    <TextField {...field} select label="Obesidade *" fullWidth>
+                    <TextField {...field} select label="Obesidade *" fullWidth disabled={fatorRiscoSelecionado === 'Não'}>
                       {YES_NO_OPTIONS.map(opt => <MenuItem key={opt} value={opt}>{opt}</MenuItem>)}
                     </TextField>
                   )} />
@@ -573,21 +588,21 @@ export const PatientForm: React.FC = () => {
                 </Grid>
                 <Grid item xs={12} md={4}>
                   <Controller name="vacinacao.primeiraDose" control={control} render={({ field }) => (
-                    <TextField {...field} select label="1ª Dose COVID *" fullWidth>
+                    <TextField {...field} select label="1ª Dose COVID *" fullWidth disabled={vacinaCovidSelecionada === 'Não'}>
                       {YES_NO_OPTIONS.map(opt => <MenuItem key={opt} value={opt}>{opt}</MenuItem>)}
                     </TextField>
                   )} />
                 </Grid>
                 <Grid item xs={12} md={4}>
                   <Controller name="vacinacao.segundaDose" control={control} render={({ field }) => (
-                    <TextField {...field} select label="2ª Dose COVID *" fullWidth>
+                    <TextField {...field} select label="2ª Dose COVID *" fullWidth disabled={vacinaCovidSelecionada === 'Não'}>
                       {YES_NO_OPTIONS.map(opt => <MenuItem key={opt} value={opt}>{opt}</MenuItem>)}
                     </TextField>
                   )} />
                 </Grid>
                 <Grid item xs={12} md={4}>
                   <Controller name="vacinacao.terceiraDose" control={control} render={({ field }) => (
-                    <TextField {...field} select label="3ª Dose COVID (Reforço) *" fullWidth>
+                    <TextField {...field} select label="3ª Dose COVID (Reforço) *" fullWidth disabled={vacinaCovidSelecionada === 'Não'}>
                       {YES_NO_OPTIONS.map(opt => <MenuItem key={opt} value={opt}>{opt}</MenuItem>)}
                     </TextField>
                   )} />
