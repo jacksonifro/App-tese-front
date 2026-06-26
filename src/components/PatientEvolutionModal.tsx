@@ -30,7 +30,6 @@ export const PatientEvolutionModal: React.FC<Props> = ({ open, onClose, patientI
       // Ordenar por data crescente para a evolução no tempo
       const sorted = history.sort((a: any, b: any) => new Date(a.dataHora).getTime() - new Date(b.dataHora).getTime());
       
-      const firstDate = sorted.length > 0 ? new Date(sorted[0].dataHora).getTime() : 0;
 
       const chartData = sorted.map((item: any, idx: number) => {
         let obito = 0;
@@ -47,10 +46,6 @@ export const PatientEvolutionModal: React.FC<Props> = ({ open, onClose, patientI
         const percObito = total > 0 ? (obito / total) * 100 : 0;
         const percCura = total > 0 ? (cura / total) * 100 : 0;
 
-        // Se o paciente tiver 1 predição no primeiro dia, Diff será 0. Então será D0.
-        const diffTime = new Date(item.dataHora).getTime() - firstDate;
-        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-        
         return {
           name: `Predição ${idx + 1}|${new Date(item.dataHora).toLocaleDateString('pt-BR')}`,
           fullDate: new Date(item.dataHora).toLocaleDateString('pt-BR'),
@@ -124,10 +119,13 @@ export const PatientEvolutionModal: React.FC<Props> = ({ open, onClose, patientI
                   tickLine={false}
                 />
                 <Tooltip 
-                  formatter={(value: number, name: string) => [`${value}%`, name]}
-                  labelFormatter={(label: string) => {
-                    const split = label.split('|');
-                    return `${split[0]} (${split[1]})`;
+                  formatter={(value: any, name: any) => [`${value}%`, name] as any}
+                  labelFormatter={(label: any) => {
+                    if (typeof label === 'string') {
+                      const split = label.split('|');
+                      return `${split[0]} (${split[1]})`;
+                    }
+                    return label;
                   }}
                   contentStyle={{ borderRadius: 8, border: '1px solid #E2E8F0', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
                   itemStyle={{ fontWeight: 600 }}
