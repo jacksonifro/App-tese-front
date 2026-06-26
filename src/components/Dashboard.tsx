@@ -11,7 +11,7 @@ interface DashboardProps {
 const getAucForJudge = (judgeName: string, response: PredictionResponse): string => {
   const nameLower = judgeName.toLowerCase();
   let auc: number | undefined = undefined;
-  
+
   if (nameLower.includes('random')) auc = response.randomForest?.metrics?.aucRoc;
   else if (nameLower.includes('knn')) auc = response.knn?.metrics?.aucRoc;
   else if (nameLower.includes('logistic') || nameLower.includes('regressão') || nameLower.includes('regression')) auc = response.logisticRegression?.metrics?.aucRoc;
@@ -20,7 +20,7 @@ const getAucForJudge = (judgeName: string, response: PredictionResponse): string
   else if (nameLower.includes('gemini') || nameLower.includes('groq') || nameLower.includes('llama') || nameLower.includes('llm')) {
     return 'N/A (Fixo)';
   }
-  
+
   return auc ? `${(auc * 100).toFixed(1)}%` : '-';
 };
 
@@ -69,10 +69,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ response }) => {
                     <Typography variant="body1" sx={{ fontWeight: 600 }}>{classe}</Typography>
                     <Typography variant="body2" color="textSecondary">Peso: {peso.toFixed(2)}</Typography>
                   </Box>
-                  <LinearProgress 
-                    variant="determinate" 
-                    value={Math.min((peso / 5) * 100, 100)} 
-                    sx={{ height: 10, borderRadius: 5, backgroundColor: '#EAECF0', '& .MuiLinearProgress-bar': { backgroundColor: classe.toUpperCase() === 'CURA' ? '#12B76A' : '#D92D20' } }} 
+                  <LinearProgress
+                    variant="determinate"
+                    value={Math.min((peso / 5) * 100, 100)}
+                    sx={{ height: 10, borderRadius: 5, backgroundColor: '#EAECF0', '& .MuiLinearProgress-bar': { backgroundColor: classe.toUpperCase() === 'CURA' ? '#12B76A' : '#D92D20' } }}
                   />
                 </Box>
               ))}
@@ -94,16 +94,16 @@ export const Dashboard: React.FC<DashboardProps> = ({ response }) => {
                         <TableRow key={idx} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                           <TableCell sx={{ color: 'text.secondary', fontWeight: 500 }}>{vote.judge}</TableCell>
                           <TableCell>
-                            <Chip 
-                              label={vote.vote} 
-                              size="small" 
-                              sx={{ 
+                            <Chip
+                              label={vote.vote}
+                              size="small"
+                              sx={{
                                 backgroundColor: vote.vote.toUpperCase() === 'CURA' ? '#D1FADF' : '#FEE4E2',
                                 color: vote.vote.toUpperCase() === 'CURA' ? '#039855' : '#D92D20',
                                 fontWeight: 600,
                                 fontSize: '0.7rem',
                                 height: 20
-                              }} 
+                              }}
                             />
                           </TableCell>
                           <TableCell align="center" sx={{ color: 'text.secondary', fontWeight: 500 }}>
@@ -126,18 +126,18 @@ export const Dashboard: React.FC<DashboardProps> = ({ response }) => {
             <Card sx={{ backgroundColor: '#FFFDF0', borderColor: '#FEF0C7' }}>
               <CardContent>
                 <Typography variant="h6" sx={{ mb: 2, color: '#B54708', display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Brain size={20} /> Fatores Determinantes na Predição (Explainable AI)
+                  <Brain size={20} /> Fatores Determinantes na Predição
                 </Typography>
                 <Typography variant="body2" sx={{ mb: 2, color: '#B54708' }}>
                   Principais variáveis clínicas que influenciaram a decisão do modelo (extraído via análise conjunta dos sistemas de IA).
                 </Typography>
-                
+
                 <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
                   {response.topFeatures.map((feat, idx) => {
                     const impactLower = feat.impact?.toLowerCase() || '';
                     let bgColor = '#FEF0C7';
                     let color = '#B54708';
-                    
+
                     if (impactLower.includes('crítico') || impactLower.includes('critico') || impactLower.includes('alto')) {
                       bgColor = '#FEE4E2';
                       color = '#D92D20';
@@ -222,17 +222,17 @@ export const Dashboard: React.FC<DashboardProps> = ({ response }) => {
                   <Card>
                     <CardContent>
                       <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>{model.name}</Typography>
-                      <Chip 
-                        label={model.data.predictedClass} 
-                        size="small" 
-                        sx={{ 
-                          mt: 1, mb: 2, 
+                      <Chip
+                        label={model.data.predictedClass}
+                        size="small"
+                        sx={{
+                          mt: 1, mb: 2,
                           backgroundColor: model.data.predictedClass.toUpperCase() === 'CURA' ? '#D1FADF' : '#FEE4E2',
                           color: model.data.predictedClass.toUpperCase() === 'CURA' ? '#039855' : '#D92D20',
                           fontWeight: 600
-                        }} 
+                        }}
                       />
-                      
+
                       <Typography variant="body2" sx={{ mb: 1, fontWeight: 600 }}>Probabilidades:</Typography>
                       {Object.entries(model.data.probabilities).map(([classe, prob]) => (
                         <Box key={classe} sx={{ mb: 1 }}>
@@ -240,10 +240,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ response }) => {
                             <Typography variant="caption">{classe}</Typography>
                             <Typography variant="caption">{(prob * 100).toFixed(1)}%</Typography>
                           </Box>
-                          <LinearProgress 
-                            variant="determinate" 
-                            value={prob * 100} 
-                            sx={{ height: 6, borderRadius: 3, backgroundColor: '#EAECF0', '& .MuiLinearProgress-bar': { backgroundColor: classe.toUpperCase() === 'CURA' ? '#12B76A' : '#D92D20' } }} 
+                          <LinearProgress
+                            variant="determinate"
+                            value={prob * 100}
+                            sx={{ height: 6, borderRadius: 3, backgroundColor: '#EAECF0', '& .MuiLinearProgress-bar': { backgroundColor: classe.toUpperCase() === 'CURA' ? '#12B76A' : '#D92D20' } }}
                           />
                         </Box>
                       ))}
