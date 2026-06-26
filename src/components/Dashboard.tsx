@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Card, CardContent, Typography, Grid, LinearProgress, Chip } from '@mui/material';
+import { Box, Card, CardContent, Typography, Grid, LinearProgress, Chip, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 import type { PredictionResponse } from '../types/api';
 import ReactMarkdown from 'react-markdown';
 import { Brain, Clock, ActivitySquare } from 'lucide-react';
@@ -7,6 +7,22 @@ import { Brain, Clock, ActivitySquare } from 'lucide-react';
 interface DashboardProps {
   response: PredictionResponse;
 }
+
+const getAucForJudge = (judgeName: string, response: PredictionResponse): string => {
+  const nameLower = judgeName.toLowerCase();
+  let auc: number | undefined = undefined;
+  
+  if (nameLower.includes('random')) auc = response.randomForest?.metrics?.aucRoc;
+  else if (nameLower.includes('knn')) auc = response.knn?.metrics?.aucRoc;
+  else if (nameLower.includes('logistic') || nameLower.includes('regressão') || nameLower.includes('regression')) auc = response.logisticRegression?.metrics?.aucRoc;
+  else if (nameLower.includes('svm') || nameLower.includes('support')) auc = response.svm?.metrics?.aucRoc;
+  else if (nameLower.includes('gradient')) auc = response.gradientBoosting?.metrics?.aucRoc;
+  else if (nameLower.includes('gemini') || nameLower.includes('groq') || nameLower.includes('llama') || nameLower.includes('llm')) {
+    return 'N/A (Fixo)';
+  }
+  
+  return auc ? `${(auc * 100).toFixed(1)}%` : '-';
+};
 
 export const Dashboard: React.FC<DashboardProps> = ({ response }) => {
   const verdict = response.verdictBoard.finalVerdict;
@@ -60,6 +76,46 @@ export const Dashboard: React.FC<DashboardProps> = ({ response }) => {
                   />
                 </Box>
               ))}
+
+              <Box sx={{ mt: 4 }}>
+                <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600, color: 'text.secondary' }}>Detalhamento dos Votos</Typography>
+                <TableContainer component={Paper} variant="outlined" sx={{ boxShadow: 'none' }}>
+                  <Table size="small">
+                    <TableHead sx={{ backgroundColor: '#F9FAFB' }}>
+                      <TableRow>
+                        <TableCell sx={{ fontWeight: 600 }}>Juiz (Algoritmo)</TableCell>
+                        <TableCell sx={{ fontWeight: 600 }}>Voto</TableCell>
+                        <TableCell align="center" sx={{ fontWeight: 600 }}>Métrica Base (AUC)</TableCell>
+                        <TableCell align="right" sx={{ fontWeight: 600 }}>Peso Numérico</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {response.verdictBoard.votes.map((vote, idx) => (
+                        <TableRow key={idx} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                          <TableCell sx={{ color: 'text.secondary', fontWeight: 500 }}>{vote.judge}</TableCell>
+                          <TableCell>
+                            <Chip 
+                              label={vote.vote} 
+                              size="small" 
+                              sx={{ 
+                                backgroundColor: vote.vote.toUpperCase() === 'CURA' ? '#D1FADF' : '#FEE4E2',
+                                color: vote.vote.toUpperCase() === 'CURA' ? '#039855' : '#D92D20',
+                                fontWeight: 600,
+                                fontSize: '0.7rem',
+                                height: 20
+                              }} 
+                            />
+                          </TableCell>
+                          <TableCell align="center" sx={{ color: 'text.secondary', fontWeight: 500 }}>
+                            {getAucForJudge(vote.judge, response)}
+                          </TableCell>
+                          <TableCell align="right" sx={{ fontWeight: 600 }}>{vote.weight.toFixed(2)}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </Box>
             </CardContent>
           </Card>
         </Grid>
@@ -147,18 +203,22 @@ export const Dashboard: React.FC<DashboardProps> = ({ response }) => {
                       ))}
 
                       {model.data.metrics && (
-                        <Box sx={{ mt: 2, pt: 1.5, borderTop: '1px dashed #EAECF0', display: 'flex', justifyContent: 'space-between', textAlign: 'center' }}>
-                          <Box sx={{ backgroundColor: '#F9FAFB', borderRadius: 1, p: 1, flex: 1, mr: 0.5 }}>
+                        <Box sx={{ mt: 2, pt: 1.5, borderTop: '1px dashed #EAECF0', display: 'flex', justifyContent: 'space-between', textAlign: 'center', gap: 0.5 }}>
+                          <Box sx={{ backgroundColor: '#F9FAFB', borderRadius: 1, p: 1, flex: 1 }}>
                             <Typography variant="caption" color="textSecondary" sx={{ display: 'block', fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: 0.5 }}>Accuracy</Typography>
                             <Typography variant="body2" sx={{ fontWeight: 700, color: '#101828' }}>{(model.data.metrics.accuracy * 100).toFixed(1)}%</Typography>
                           </Box>
-                          <Box sx={{ backgroundColor: '#F9FAFB', borderRadius: 1, p: 1, flex: 1, mx: 0.5 }}>
+                          <Box sx={{ backgroundColor: '#F9FAFB', borderRadius: 1, p: 1, flex: 1 }}>
                             <Typography variant="caption" color="textSecondary" sx={{ display: 'block', fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: 0.5 }}>Precision</Typography>
                             <Typography variant="body2" sx={{ fontWeight: 700, color: '#101828' }}>{(model.data.metrics.precision * 100).toFixed(1)}%</Typography>
                           </Box>
-                          <Box sx={{ backgroundColor: '#F9FAFB', borderRadius: 1, p: 1, flex: 1, ml: 0.5 }}>
+                          <Box sx={{ backgroundColor: '#F9FAFB', borderRadius: 1, p: 1, flex: 1 }}>
                             <Typography variant="caption" color="textSecondary" sx={{ display: 'block', fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: 0.5 }}>F1 Score</Typography>
                             <Typography variant="body2" sx={{ fontWeight: 700, color: '#101828' }}>{(model.data.metrics.f1Score * 100).toFixed(1)}%</Typography>
+                          </Box>
+                          <Box sx={{ backgroundColor: '#F0F9FF', borderRadius: 1, p: 1, flex: 1, border: '1px solid #B9E6FE' }}>
+                            <Typography variant="caption" sx={{ color: '#026AA2', display: 'block', fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: 0.5, fontWeight: 700 }}>AUC</Typography>
+                            <Typography variant="body2" sx={{ fontWeight: 700, color: '#026AA2' }}>{(model.data.metrics.aucRoc * 100).toFixed(1)}%</Typography>
                           </Box>
                         </Box>
                       )}

@@ -123,10 +123,18 @@ export const NewPrediction: React.FC = () => {
 
     setLoading(true);
     try {
+      let suporteFormatado = formData.suporteVentilatorio;
+      if (suporteFormatado === 'Sim - não invasivo') {
+        suporteFormatado = 'Sim - nao invasivo';
+      } else if (suporteFormatado === 'Não') {
+        suporteFormatado = 'Nao';
+      }
+
       const response = await predictionService.predictEpisode({
         pacienteId: selectedPatient.id,
         episodio: {
            ...formData,
+           suporteVentilatorio: suporteFormatado,
            diasUTI: Number(formData.diasUTI)
         }
       });

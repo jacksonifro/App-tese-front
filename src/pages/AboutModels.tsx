@@ -56,6 +56,50 @@ export const AboutModels: React.FC = () => {
             </Card>
           </Grid>
         </Grid>
+
+        <Box sx={{ mt: 4, p: 3, backgroundColor: '#fff', border: '1px dashed #CBD5E1', borderRadius: 2 }}>
+          <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 2, color: '#334155' }}>
+            Exemplo Prático de Votação
+          </Typography>
+          <Typography variant="body2" sx={{ color: '#475569', mb: 2, lineHeight: 1.6 }}>
+            Imagine que acabamos de receber os dados de um novo paciente. Os 5 algoritmos matemáticos e os 2 modelos generativos (LLMs) começam a analisar os dados simultaneamente e chegam a um impasse clínico:
+          </Typography>
+          
+          <Grid container spacing={2} sx={{ mb: 3 }}>
+            <Grid item xs={12} sm={6}>
+              <Box sx={{ p: 2, backgroundColor: '#ECFDF5', borderRadius: 2, border: '1px solid #A7F3D0' }}>
+                <Typography variant="subtitle2" sx={{ color: '#059669', mb: 1, fontWeight: 700 }}>Votaram pela CURA:</Typography>
+                <ul style={{ margin: 0, paddingLeft: '20px', color: '#047857', fontSize: '0.875rem' }}>
+                  <li><strong>Random Forest:</strong> Peso 0.92</li>
+                  <li><strong>Groq (LLM):</strong> Peso 0.85</li>
+                  <li><strong>KNN:</strong> Peso 0.78</li>
+                </ul>
+                <Typography variant="body2" sx={{ fontWeight: 700, mt: 1, color: '#065F46' }}>
+                  Soma Total: 2.55
+                </Typography>
+              </Box>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Box sx={{ p: 2, backgroundColor: '#FEF2F2', borderRadius: 2, border: '1px solid #FECACA' }}>
+                <Typography variant="subtitle2" sx={{ color: '#DC2626', mb: 1, fontWeight: 700 }}>Votaram por ÓBITO:</Typography>
+                <ul style={{ margin: 0, paddingLeft: '20px', color: '#B91C1C', fontSize: '0.875rem' }}>
+                  <li><strong>Gemini (LLM):</strong> Peso 0.85</li>
+                  <li><strong>SVM:</strong> Peso 0.82</li>
+                  <li><strong>Regressão Logística:</strong> Peso 0.79</li>
+                  <li><strong>Gradient Boosting:</strong> Peso 0.88</li>
+                </ul>
+                <Typography variant="body2" sx={{ fontWeight: 700, mt: 1, color: '#991B1B' }}>
+                  Soma Total: 3.34
+                </Typography>
+              </Box>
+            </Grid>
+          </Grid>
+          
+          <Typography variant="body2" sx={{ color: '#475569', lineHeight: 1.6 }}>
+            <strong>O Veredito Final:</strong> Mesmo tendo opiniões de ambos os lados (o que acontece frequentemente em casos clínicos complexos "borderline"), o lado do <strong>ÓBITO acumulou uma massa de peso maior (3.34 contra 2.55)</strong>. 
+            A IA apresentará "Óbito" como resultado primário para você, mas no "Tribunal dos Modelos" do Dashboard (e no histórico) exibiremos o placar de pesos exato para que fique claro que foi uma decisão apertada e dividida!
+          </Typography>
+        </Box>
       </Paper>
 
       {/* Seção 2: Os Algoritmos */}

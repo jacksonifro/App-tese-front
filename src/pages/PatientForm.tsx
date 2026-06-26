@@ -96,6 +96,7 @@ export const PatientForm: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [cidades, setCidades] = useState<string[]>([]);
   const [loadingCidades, setLoadingCidades] = useState(false);
+  const [cidadeViaCep, setCidadeViaCep] = useState<string>('');
 
   const { control, handleSubmit, reset, watch, trigger, setValue, formState: { errors } } = useRHForm<PatientFormData>({
     resolver: zodResolver(patientSchema),
@@ -123,6 +124,7 @@ export const PatientForm: React.FC = () => {
   const dataNascimentoSelecionada = watch('dataNascimento');
   const fatorRiscoSelecionado = watch('comorbidade.fatorRisco');
   const vacinaCovidSelecionada = watch('vacinacao.vacinaCovid');
+  const cepDigitado = watch('endereco.cep');
 
   useEffect(() => {
     if (fatorRiscoSelecionado === 'Não') {
@@ -158,14 +160,53 @@ export const PatientForm: React.FC = () => {
       fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${ufSelecionada}/municipios`)
         .then(res => res.json())
         .then(data => {
-          setCidades(data.map((c: any) => c.nome));
+          const loadedCidades = data.map((c: any) => c.nome);
+          setCidades(loadedCidades);
           setLoadingCidades(false);
+          
+          if (cidadeViaCep) {
+             const cidadeEncontrada = loadedCidades.find((c: string) => c.toLowerCase() === cidadeViaCep.toLowerCase());
+             if (cidadeEncontrada) {
+               setValue('endereco.municipio', cidadeEncontrada);
+             }
+             setCidadeViaCep('');
+          }
         })
         .catch(() => setLoadingCidades(false));
     } else {
       setCidades([]);
     }
-  }, [ufSelecionada]);
+  }, [ufSelecionada, cidadeViaCep, setValue]);
+
+  useEffect(() => {
+    if (cepDigitado && cepDigitado.length === 9) {
+      const cepClean = cepDigitado.replace('-', '');
+      fetch(`https://viacep.com.br/ws/${cepClean}/json/`)
+        .then(res => res.json())
+        .then(data => {
+          if (!data.erro) {
+            if (!UF_NORTE_OPTIONS.includes(data.uf)) {
+              Swal.fire({
+                icon: 'error',
+                title: 'Região Não Permitida',
+                text: 'Apenas pacientes da região Norte são permitidos neste sistema.',
+                confirmButtonColor: '#d33'
+              });
+              setValue('endereco.uf', '');
+              setValue('endereco.municipio', '');
+              setValue('endereco.bairro', '');
+              setValue('endereco.logradouro', '');
+            } else {
+              setValue('endereco.logradouro', data.logradouro);
+              setValue('endereco.bairro', data.bairro);
+              setValue('endereco.uf', data.uf);
+              setCidadeViaCep(data.localidade);
+            }
+          }
+        })
+        .catch(err => console.error("Erro ViaCEP:", err));
+    }
+  }, [cepDigitado, setValue]);
 
   useEffect(() => {
     if (id) {
